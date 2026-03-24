@@ -3,11 +3,11 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from lib.chat_utils import ChatRequest, Messages, add_message, chat
-from lib.runtime import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, create_client
+from lib.chat_utils import ChatRequest, Messages, add_message, chat, text_message
+from lib.runtime import create_client
 
 
-def main(model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> None:
+def main() -> None:
     client = create_client()
     messages: Messages = []
     system = """
@@ -19,13 +19,11 @@ def main(model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> No
     user_question = """
     I would like to return this battling hermit crab. Who should I contact
     """
-    add_message(messages, "user", user_question)
+    add_message(messages, text_message("user", user_question))
     response = chat(
         client,
         ChatRequest(
-            model=model,
             messages=messages,
-            max_tokens=max_tokens,
             system=system,
         ),
     )

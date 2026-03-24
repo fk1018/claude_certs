@@ -4,11 +4,11 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from anthropic import APIStatusError
-from lib.chat_utils import ChatRequest, Messages, add_message, chat
-from lib.runtime import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, create_client
+from lib.chat_utils import ChatRequest, Messages, add_message, chat, text_message
+from lib.runtime import create_client
 
 
-def main(model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> None:
+def main() -> None:
     client = create_client()
     messages: Messages = []
 
@@ -28,7 +28,7 @@ def main(model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> No
             print("Goodbye.")
             break
 
-        add_message(messages, "user", user_input)
+        add_message(messages, text_message("user", user_input))
         # was testing with 'Provide me song lyrics to "Hit me baby one more time".'
         # it throws an error bc its copyright midway through wanted to see what error
         # handling looked like
@@ -37,13 +37,11 @@ def main(model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> No
             response = chat(
                 client,
                 ChatRequest(
-                    model=model,
                     messages=messages,
-                    max_tokens=max_tokens,
                     stream=True,
                 ),
             )
-            add_message(messages, "assistant", response)
+            add_message(messages, text_message("assistant", response))
 
         except APIStatusError as e:
             print(f"\n[API error] {e}\n")

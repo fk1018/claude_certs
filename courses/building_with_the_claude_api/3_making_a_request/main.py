@@ -7,14 +7,14 @@ from anthropic.types import MessageParam
 from lib.runtime import DEFAULT_MAX_TOKENS, DEFAULT_MODEL, create_client
 
 
-def main(model: str = DEFAULT_MODEL, max_tokens: int = DEFAULT_MAX_TOKENS) -> None:
+def main() -> None:
     client = create_client()
     messages: list[MessageParam] = [
         {"role": "user", "content": "What is a banana split. Answer in one sentence"}
     ]
     response = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
+        model=DEFAULT_MODEL,
+        max_tokens=DEFAULT_MAX_TOKENS,
         messages=messages,
     )
 

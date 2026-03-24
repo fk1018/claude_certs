@@ -4,6 +4,7 @@ from typing import Literal
 from anthropic import Anthropic
 from anthropic.types import MessageParam, ModelParam
 from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
+from lib.runtime import DEFAULT_MAX_TOKENS, DEFAULT_MODEL
 
 type MessageRole = Literal["user", "assistant"]
 type Messages = list[MessageParam]
@@ -11,9 +12,9 @@ type Messages = list[MessageParam]
 
 @dataclass(slots=True, kw_only=True)
 class ChatRequest:
-    model: ModelParam
+    model: ModelParam = DEFAULT_MODEL
     messages: Messages
-    max_tokens: int = 1000
+    max_tokens: int = DEFAULT_MAX_TOKENS
     system: str | None = None
     temperature: float = 1.0
     stream: bool = False
@@ -36,10 +37,12 @@ class ChatRequest:
         return params
 
 
-def add_message(messages: Messages, role: MessageRole, text: str) -> Messages:
-    message: MessageParam = {"role": role, "content": text}
+def add_message(messages: Messages, message: MessageParam) -> None:
     messages.append(message)
-    return messages
+
+
+def text_message(role: MessageRole, text: str) -> MessageParam:
+    return {"role": role, "content": text}
 
 
 def chat(client: Anthropic, request: ChatRequest) -> str:
